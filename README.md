@@ -103,16 +103,74 @@ AntiStyler was evaluated against:
 
 ## ▶️ Quick Start
 
-### Run Demo (Recommended)
+### Standalone Python experiments
+
+Requires Python 3.11 or newer. Create an environment and install the pinned
+dependencies (choose matching PyTorch wheels for your CUDA installation if needed):
 
 ```bash
-jupyter notebook AntiStyler_Demo.ipynb
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
 ```
 
-This notebook demonstrates:
-- Attack Generation
-- AntiStyler's Pipeline
-- AntiStyler's Effect on Benign and Adversarial Images
+Run the complete notebook workflow without Jupyter:
+
+```bash
+python run_experiment.py --config configs/experiment.json
+```
+
+Or run each component independently:
+
+```bash
+python run_attack.py --config configs/attack.json
+python run_defense.py --config configs/defense.json
+python run_detection.py --config configs/detection.json
+```
+
+The attack reads `image.jpg`; the defense example reads the attack's
+`outputs/attack/attacked.pt`; the detection example reads `image.jpg`.
+Change `input_image` in a configuration to process another image or saved tensor.
+Paths inside JSON files are relative to that file. Pretrained weights download
+on first use and are cached in `.cache/torch/`.
+
+Every run saves its resolved configuration, seed, environment information,
+images, exact tensors, and applicable losses/detections. Output directories
+must be empty so previous experiments are preserved.
+
+```bash
+# Repeat with another fixed seed and a separate output directory.
+python run_experiment.py --seed 123 --output-dir outputs/seed-123
+
+# Choose a fresh random seed, recorded in the output for later replay.
+python run_experiment.py --seed random --output-dir outputs/random-run
+
+# Check configuration without importing PyTorch or downloading models.
+python run_experiment.py --validate-config
+
+# Run offline CPU tests; no pretrained weights are needed.
+python -m unittest discover -s tests -v
+```
+
+### Dataset-level patch attack (VisDrone, YOLO11)
+
+`run_patch_attack.py` trains one universal patch against an Ultralytics YOLO
+detector on a YOLO-format training split, pastes it on every target object of
+the evaluation split to write an attacked dataset, and reports COCO AP/AR and
+attack success rate for clean, random-noise-control and attacked images:
+
+```bash
+python run_patch_attack.py --config configs/attack_visdrone.json
+# Vehicles vanish instead of being relabelled as other classes:
+python run_patch_attack.py --config configs/attack_visdrone_vanish.json
+```
+
+See [the patch attack documentation](docs/experiments.md#dataset-patch-attack)
+for the threat model, metrics, data layout and results.
+
+See [experiment documentation](docs/experiments.md) for the code structure,
+parameter reference, reproducibility guarantees, and notebook fixes. The original
+`AntiStyler_Demo.ipynb` remains available as an interactive reference.
 
  ---
 

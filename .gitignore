@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+.venv/
+.cache/
+outputs/
+.pytest_cache/
+
+# Directories
+data
+models/*/*.pt
