@@ -463,3 +463,41 @@ tuned on the test splits. A clean-only smoke run on 50
 test images (no training) gave a yolo11n person AP50 of 0.955 on INRIA and 0.81
 on VOC, which confirms that the labels and class indices are correct. A
 random-noise patch of this size hid only about 1% of detected persons.
+
+### Results
+
+Person metrics on INRIA `test` (288 images, 589 persons) and VOC `test_500`
+(500 images, 434 persons, all patched). ASR is the share of clean-detected
+persons that are no longer detected as person at confidence 0.25 / IoU 0.5.
+Vanish requires that no class is detected there; strict vanish requires that no
+confident prediction center falls inside the box. The control is a uniform
+noise patch of the same size and placement.
+
+| Dataset | Victim | Condition | Person AP | AP50 | AR@100 | Recall | ASR | Vanish | Strict |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| INRIA | yolo11n | clean | 0.657 | 0.959 | 0.747 | 98.5% | – | – | – |
+| | | control | 0.651 | 0.951 | 0.750 | 97.1% | 1.7% | 1.7% | 1.0% |
+| | | **attacked** | **0.147** | **0.363** | 0.637 | 70.5% | **28.6%** | 28.6% | 4.3% |
+| INRIA | yolo11m | clean | 0.654 | 0.948 | 0.751 | 98.3% | – | – | – |
+| | | control | 0.636 | 0.929 | 0.750 | 97.6% | 0.9% | 0.9% | 0.2% |
+| | | **attacked** | **0.296** | **0.491** | 0.723 | 83.4% | **15.5%** | 15.5% | 1.4% |
+| VOC2007 | yolo11n | clean | 0.617 | 0.883 | 0.755 | 92.6% | – | – | – |
+| | | control | 0.590 | 0.848 | 0.746 | 89.4% | 6.5% | 6.2% | 3.2% |
+| | | **attacked** | **0.375** | **0.621** | 0.682 | 77.7% | **18.7%** | 17.7% | 4.5% |
+| VOC2007 | yolo11m | clean | 0.687 | 0.905 | 0.797 | 97.0% | – | – | – |
+| | | control | 0.625 | 0.834 | 0.785 | 91.9% | 5.9% | 5.9% | 1.7% |
+| | | **attacked** | **0.446** | **0.638** | 0.741 | 77.7% | **20.4%** | 19.7% | 3.8% |
+
+All-class VOC AP (20 classes) barely moves: yolo11n 0.629 -> 0.612 and yolo11m
+0.709 -> 0.683, so the damage is confined to the patched persons.
+
+The patch clearly beats the noise control in every experiment, but at
+0.2 x diagonal it mainly degrades person detections (lower confidence, worse
+localisation) rather than erasing them. Only 1-5% of persons leave no confident
+prediction at all. On INRIA the larger yolo11m is roughly half as susceptible as
+yolo11n. On VOC the two victims end up with similar ASR (18.7% and 20.4%).
+
+Each attacked dataset was checked against its source split. Every image is
+present, `clean` is pixel-identical to the decoded original, labels are
+identical to the source, and attacked pixels differ only inside person boxes.
+The datasets keep the source split names (`test`, `test_500`) rather than `val`.
