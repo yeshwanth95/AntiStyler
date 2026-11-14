@@ -165,6 +165,16 @@ python run_patch_attack.py --config configs/attack_visdrone.json
 python run_patch_attack.py --config configs/attack_visdrone_vanish.json
 ```
 
+Person-vanishing patches for INRIAPerson and PASCAL VOC2007 against the default
+COCO YOLO11n/YOLO11m first need the datasets converted to YOLO format with COCO
+class indices:
+
+```bash
+python prepare_dataset.py --dataset inria --source data/INRIAPerson --output data/inria_yolo
+python prepare_dataset.py --dataset voc2007 --source data/pascalVOC2007 --output data/voc2007_yolo
+python run_patch_attack.py --config configs/attack_inria_yolo11n.json  # also _yolo11m, attack_voc2007_*
+```
+
 See [the patch attack documentation](docs/experiments.md#dataset-patch-attack)
 for the threat model, metrics, data layout and results.
 
