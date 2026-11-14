@@ -1,0 +1,71 @@
+{
+  "output_dir": "../outputs/attack_visdrone_vanish",
+  "runtime": {
+    "seed": 42,
+    "deterministic": true,
+    "device": "auto",
+    "num_threads": 6,
+    "cache_dir": null
+  },
+  "victim": {
+    "weights": "../models/yolo11/VisDrone_YOLO11m.pt",
+    "imgsz": 640
+  },
+  "dataset": {
+    "root": "../data/visdrone_yolo",
+    "train_split": "train",
+    "eval_split": "val",
+    "eval_images": null,
+    "target_classes": [
+      "car",
+      "van",
+      "truck",
+      "bus"
+    ]
+  },
+  "patch": {
+    "size": 32,
+    "scale": 0.5,
+    "max_box_fraction": 1.0,
+    "min_side": 2,
+    "init": "random"
+  },
+  "train": {
+    "images": 1024,
+    "epochs": 4,
+    "batch_size": 4,
+    "learning_rate": 0.1,
+    "lr_schedule": "cosine",
+    "loss": "sum_above_threshold",
+    "score_threshold": 0.1,
+    "tv_weight": 0.5,
+    "suppress": "all_classes_on_objects",
+    "object_iou": 0.3,
+    "augment": {
+      "position_jitter": 0.1,
+      "scale_jitter": 0.1,
+      "brightness": 0.1,
+      "contrast": 0.1,
+      "noise": 0.03
+    }
+  },
+  "output_dataset": {
+    "dir": "../data/visdrone_yolo_patch_vanish",
+    "image_format": "png",
+    "layout": "variants"
+  },
+  "evaluation": {
+    "conf": 0.001,
+    "iou": 0.7,
+    "max_det": 300,
+    "max_dets": [
+      1,
+      10,
+      100
+    ],
+    "asr_conf": 0.25,
+    "asr_iou": 0.5,
+    "control": true,
+    "previews": 4
+  }
+}
