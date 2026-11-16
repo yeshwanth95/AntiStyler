@@ -66,6 +66,9 @@ class DefenseConfig:
     erosion_kernel: int = 11
     smoothing_kernel: int = 51
     final_dilation_kernel: int = 11
+    # "antistyled" masks the AntiStyled working image (the notebook); "masked_input"
+    # zero-fills the mask, upsampled, on the input at its own resolution (the paper).
+    output: str = "antistyled"
 
 
 @dataclass
@@ -162,6 +165,8 @@ def validate(config: Config):
         if value % 2 != 1:
             raise ValueError(f"defense.{name} must be odd")
     _number("defense.tau", d.tau, maximum=1, positive=True)
+    if d.output not in ("antistyled", "masked_input"):
+        raise ValueError("defense.output must be antistyled or masked_input")
     _number("defense.mask_threshold", d.mask_threshold, maximum=1)
     _number("defense.learning_rate", d.learning_rate, positive=True)
     for name in ("content_weight", "style_weight"):

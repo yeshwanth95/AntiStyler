@@ -1,0 +1,50 @@
+== defend (antistyled) -> salisam_comparisons/outputs/AntiStyler_UCYHPC_inria_yolo11n_patch_vanish_all_instance_yolo11
+AntiStyler on 288 frames of /home/soonapaana/Yeshwanth/KIOS_CoE/Projects/SaliSAM/data/UCYHPC_inria_yolo11n_patch_vanish/all_instance
+  -> /home/soonapaana/Yeshwanth/KIOS_CoE/Projects/AntiStyler/salisam_comparisons/outputs/AntiStyler_UCYHPC_inria_yolo11n_patch_vanish_all_instance_yolo11/recovered
+  10/288  fired 7  7.63 s/frame
+  20/288  fired 15  7.70 s/frame
+  30/288  fired 23  7.84 s/frame
+  40/288  fired 30  7.92 s/frame
+  50/288  fired 37  8.03 s/frame
+  60/288  fired 41  8.03 s/frame
+  70/288  fired 45  8.05 s/frame
+  80/288  fired 50  8.07 s/frame
+  90/288  fired 54  8.08 s/frame
+  100/288  fired 60  8.09 s/frame
+  110/288  fired 70  8.11 s/frame
+  120/288  fired 77  8.13 s/frame
+  130/288  fired 82  8.14 s/frame
+  140/288  fired 92  8.15 s/frame
+  150/288  fired 102  8.16 s/frame
+  160/288  fired 111  8.18 s/frame
+  170/288  fired 121  8.19 s/frame
+  180/288  fired 130  8.20 s/frame
+  190/288  fired 140  8.21 s/frame
+  200/288  fired 149  8.22 s/frame
+  210/288  fired 156  8.23 s/frame
+  220/288  fired 164  8.24 s/frame
+  230/288  fired 170  8.25 s/frame
+  240/288  fired 174  8.26 s/frame
+  250/288  fired 181  8.27 s/frame
+  260/288  fired 186  8.28 s/frame
+  270/288  fired 191  8.28 s/frame
+  280/288  fired 199  8.29 s/frame
+  288/288  fired 204  8.29 s/frame
+Done: 288 frames, mask fired on 204, 2388 s. Saved to /home/soonapaana/Yeshwanth/KIOS_CoE/Projects/AntiStyler/salisam_comparisons/outputs/AntiStyler_UCYHPC_inria_yolo11n_patch_vanish_all_instance_yolo11
+== defend_clean (antistyled) -> salisam_comparisons/outputs/AntiStyler_UCYHPC_inria_yolo11n_patch_vanish_all_instance_yolo11_clean
+AntiStyler on 288 frames of /home/soonapaana/Yeshwanth/KIOS_CoE/Projects/SaliSAM/data/UCYHPC_inria_yolo11n_patch_vanish/clean
+  -> /home/soonapaana/Yeshwanth/KIOS_CoE/Projects/AntiStyler/salisam_comparisons/outputs/AntiStyler_UCYHPC_inria_yolo11n_patch_vanish_all_instance_yolo11_clean/recovered
+  10/288  fired 0  8.57 s/frame
+  20/288  fired 0  8.57 s/frame
+  30/288  fired 0  8.62 s/frame
+  40/288  fired 0  8.64 s/frame
+  50/288  fired 0  8.65 s/frame
+  60/288  fired 0  8.62 s/frame
+  70/288  fired 0  8.62 s/frame
+  80/288  fired 0  8.61 s/frame
+  90/288  fired 0  8.60 s/frame
+  100/288  fired 0  8.59 s/frame
+  110/288  fired 0  8.60 s/frame
+  120/288  fired 0  8.60 s/frame
+  130/288  fired 0  8.59 s/frame
+  140/288  fired 0  8.61 s/frame

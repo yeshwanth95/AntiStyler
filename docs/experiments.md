@@ -75,6 +75,7 @@ contain absolute paths and can be supplied directly to another run with a new
 | `defense.dilation_kernel`, `erosion_kernel` | Initial mask closing kernels, `11` / `11` |
 | `defense.smoothing_kernel` | Mean filter width, `51` |
 | `defense.final_dilation_kernel` | Final mask expansion, `11` |
+| `defense.output` | `antistyled` (default, the notebook): mask the AntiStyled working image and resize it to the input; `masked_input`: zero-fill the mask, upsampled with nearest neighbour, on the input at its own resolution |
 
 Morphology kernels must be positive odd integers. Padding may be zero, but must
 leave a positive interior. The working size must also be large enough for the
@@ -127,7 +128,8 @@ The implementation preserves these notebook details:
    the input resolution. If the mask is empty, return the original image exactly.
 
 The last behavior follows the notebook even though the README overview can
-be read as masking the original input. Saved masks use the defense's working
+be read as masking the original input; `defense.output: "masked_input"` gives
+that reading instead, leaving every unmasked pixel of the input unchanged. Saved masks use the defense's working
 interior resolution, not the input resolution. PNG previews are rounded;
 `.pt` tensors preserve the numerical outputs.
 
@@ -501,3 +503,43 @@ Each attacked dataset was checked against its source split. Every image is
 present, `clean` is pixel-identical to the decoded original, labels are
 identical to the source, and attacked pixels differ only inside person boxes.
 The datasets keep the source split names (`test`, `test_500`) rather than `val`.
+
+### Larger patch (0.3 x diagonal), yolo11n
+
+The 0.2 x diagonal patch mostly degrades person boxes rather than removing
+them. To choose between more training and a larger patch, short yolo11n runs
+were made on the INRIA tuning split (fit 512 / hold 102 train images), changing
+only the scale or epochs of the tuned configuration:
+
+| Patch scale | Epochs (image passes) | Hold AP50 (clean 0.734) | Noise control AP50 | ASR | Strict vanish |
+| --- | --- | --- | --- | --- | --- |
+| 0.2 | 4 (~2,000) | 0.256 | – | 22.2% | 2.5% |
+| 0.2 | 12 (~6,100) | 0.166 | 0.733 | 32.3% | 2.5% |
+| 0.25 | 4 (~2,000) | 0.231 | 0.702 | 20.7% | 0.0% |
+| 0.3 | 4 (~2,000) | 0.196 | 0.645 | 25.3% | 1.0% |
+| 0.3 | 12 (~6,100) | 0.145 | 0.645 | 41.4% | 7.6% |
+
+The full experiments already train for about 6,100 image passes (INRIA 10 x 614,
+VOC 6 x 1,025), so at that budget the larger patch is the remaining lever.
+`configs/attack_{inria,voc2007}_yolo11n_s30.json` differ from the 0.2 configs
+only in `patch.scale: 0.3` and their output paths
+(`data/{inria,voc2007}_yolo11n_patch_vanish_s30`). At 0.3 the patch covers a
+median 28% of an INRIA person box and 21% of a VOC person box, against 13% and
+9% at 0.2.
+
+| Dataset | Condition | Person AP | AP50 | AR@100 | Recall | ASR | Vanish | Strict |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| INRIA | clean | 0.657 | 0.959 | 0.747 | 98.5% | – | – | – |
+| | control 0.3 | 0.639 | 0.922 | 0.755 | 95.4% | 3.4% | 3.4% | 1.9% |
+| | attacked 0.2 | 0.147 | 0.363 | 0.637 | 70.5% | 28.6% | 28.6% | 4.3% |
+| | **attacked 0.3** | **0.116** | **0.298** | 0.554 | 66.2% | **33.1%** | 32.6% | 5.3% |
+| VOC2007 | clean | 0.617 | 0.883 | 0.755 | 92.6% | – | – | – |
+| | control 0.3 | 0.472 | 0.707 | 0.705 | 81.6% | 14.9% | 14.4% | 5.0% |
+| | attacked 0.2 | 0.375 | 0.621 | 0.682 | 77.7% | 18.7% | 17.7% | 4.5% |
+| | **attacked 0.3** | **0.176** | **0.331** | 0.569 | 52.5% | **44.3%** | 41.3% | 11.0% |
+
+On VOC the larger patch more than doubles ASR and strict vanish. Its noise
+control also hides more persons there than on INRIA (14.9% against 3.4%), so
+plain occlusion accounts for part of the VOC gain. All-class VOC AP stays close to
+clean (0.629 -> 0.588). On INRIA the gain is smaller than on the hold split.
+Both attacked datasets passed the same checks as the 0.2 datasets.

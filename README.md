@@ -175,6 +175,16 @@ python prepare_dataset.py --dataset voc2007 --source data/pascalVOC2007 --output
 python run_patch_attack.py --config configs/attack_inria_yolo11n.json  # also _yolo11m, attack_voc2007_*
 ```
 
+### Defense comparison with SaliSAM (INRIA, YOLO11n)
+
+`salisam_comparisons/` runs AntiStyler on SaliSAM's attacked INRIA set and scores
+it with SaliSAM's own evaluators (COCO AP/AR, image-level and per-target ASR / RR /
+LPR); see [its README](salisam_comparisons/README.md):
+
+```bash
+bash salisam_comparisons/run_antistyler_inria_yolo11.sh
+```
+
 See [the patch attack documentation](docs/experiments.md#dataset-patch-attack)
 for the threat model, metrics, data layout and results.
 

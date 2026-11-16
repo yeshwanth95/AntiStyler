@@ -1,0 +1,36 @@
+{
+  "runtime": {
+    "seed": 42,
+    "deterministic": true,
+    "device": "cpu",
+    "num_threads": 6,
+    "cache_dir": "../.cache/torch"
+  },
+  "defense": {
+    "weights": "IMAGENET1K_V1",
+    "checkpoint": null,
+    "content_layers": [
+      "conv_4"
+    ],
+    "style_layers": [
+      "conv_1",
+      "conv_2",
+      "conv_3",
+      "conv_4",
+      "conv_5"
+    ],
+    "content_weight": 1.0,
+    "style_weight": 1000.0,
+    "steps": 1,
+    "learning_rate": 0.001,
+    "image_size": 600,
+    "padding": 10,
+    "tau": 0.99,
+    "mask_threshold": 0.5,
+    "dilation_kernel": 11,
+    "erosion_kernel": 11,
+    "smoothing_kernel": 51,
+    "final_dilation_kernel": 11,
+    "output": "antistyled"
+  }
+}

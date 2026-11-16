@@ -176,7 +176,10 @@ class AntiStyler:
         kernel /= cfg.smoothing_kernel**2
         mask = F.conv2d(mask, kernel, padding=cfg.smoothing_kernel // 2)
         mask = dilate((mask >= cfg.mask_threshold).to(image.dtype), cfg.final_dilation_kernel)
-        if mask.any():
+        if mask.any() and cfg.output == "masked_input":
+            native = F.interpolate(mask, size=image.shape[-2:], mode="nearest")
+            defended = image.detach() * (1 - native)
+        elif mask.any():
             defended = resize(styled[:, :, interior, interior] * (1 - mask),
                               list(image.shape[-2:]), antialias=True)
         else:

@@ -195,6 +195,26 @@ class WorkflowTests(unittest.TestCase):
         self.assertFalse(result.intermediates["mask"].any())
         self.assertTrue(torch.equal(result.image, self.image))
 
+    def test_masked_input_output_only_zeroes_masked_pixels(self):
+        config = replace(self.defense_config, tau=0.7)  # a mask that survives the tiny kernels
+        torch.manual_seed(0)
+        backbone = tiny_backbone()
+        seed_everything(5)
+        notebook = AntiStyler(copy.deepcopy(backbone), config).apply(self.image)
+        seed_everything(5)
+        masked = AntiStyler(backbone, replace(config, output="masked_input"))
+        result = masked.apply(self.image)
+        self.assertTrue(result.intermediates["mask"].any())
+        self.assertTrue(torch.equal(result.intermediates["mask"], notebook.intermediates["mask"]))
+        self.assertEqual(result.image.shape, self.image.shape)
+        kept = (result.image != 0).any(1)
+        self.assertTrue(torch.equal(result.image[:, :, kept[0]], self.image[:, :, kept[0]]))
+        self.assertTrue(0 < (~kept).sum() < kept.numel())
+        masked.config = replace(masked.config, smoothing_kernel=101, mask_threshold=1)
+        self.assertTrue(torch.equal(masked.apply(self.image).image, self.image))
+        with self.assertRaisesRegex(ValueError, "defense.output"):
+            validate(replace(Config(), defense=replace(self.defense_config, output="input")))
+
     def test_invalid_layers_are_rejected(self):
         with self.assertRaisesRegex(ValueError, "Unknown backbone loss layers"):
             AntiStyler(tiny_backbone(), replace(self.defense_config, style_layers=["conv_99"]))
